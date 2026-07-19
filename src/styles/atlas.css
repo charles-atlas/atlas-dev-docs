@@ -1,0 +1,74 @@
+/* Atlas developer docs — Cloudflare-style accent + typography tweaks.
+   Starlight is theme-aware; we override the accent ramp for both schemes. */
+
+:root {
+  --sl-color-accent-low: #2e1c0b;
+  --sl-color-accent: #f6821f;
+  --sl-color-accent-high: #ffcfa3;
+  --sl-color-text-accent: #ffb066;
+}
+
+:root[data-theme='light'] {
+  --sl-color-accent-low: #ffe8d1;
+  --sl-color-accent: #d5680a;
+  --sl-color-accent-high: #6b3403;
+  --sl-color-text-accent: #b8560a;
+}
+
+/* Cloudflare-ish: slightly roomier content column, clean measure. */
+:root {
+  --sl-content-width: 50rem;
+}
+
+/* Tables read a little denser, closer to the Cloudflare reference. */
+.sl-markdown-content table {
+  font-size: var(--sl-text-sm);
+}
+
+/* Give mermaid diagrams breathing room and center them. */
+.mermaid {
+  display: flex;
+  justify-content: center;
+  margin: 1.5rem 0;
+}
+
+/* Mermaid's dark theme fills nodes almost exactly the page background with a
+   hairline border — legible on a hi-dpi screen but it washes out at smaller
+   sizes. Lift node fills to the panel color and give them an on-brand border. */
+:root[data-theme='dark'] .mermaid .node rect,
+:root[data-theme='dark'] .mermaid .node polygon,
+:root[data-theme='dark'] .mermaid .node circle,
+:root[data-theme='dark'] .mermaid .node ellipse,
+:root[data-theme='dark'] .mermaid .node path,
+:root[data-theme='dark'] .mermaid .cluster rect {
+  fill: #2a2e31 !important;
+  stroke: #f6821f !important;
+  stroke-width: 1.4px !important;
+}
+
+:root[data-theme='dark'] .mermaid .nodeLabel,
+:root[data-theme='dark'] .mermaid .edgeLabel,
+:root[data-theme='dark'] .mermaid span,
+:root[data-theme='dark'] .mermaid .cluster-label {
+  color: #eef1f3 !important;
+  fill: #eef1f3 !important;
+}
+
+:root[data-theme='dark'] .mermaid .edgeLabel,
+:root[data-theme='dark'] .mermaid .edgeLabel rect,
+:root[data-theme='dark'] .mermaid .labelBkg {
+  background-color: #17191b !important;
+  fill: #17191b !important;
+}
+
+:root[data-theme='dark'] .mermaid .flowchart-link,
+:root[data-theme='dark'] .mermaid .edgePath .path,
+:root[data-theme='dark'] .mermaid .edge-thickness-normal {
+  stroke: #9aa2a9 !important;
+}
+
+:root[data-theme='dark'] .mermaid .marker,
+:root[data-theme='dark'] .mermaid marker path {
+  fill: #9aa2a9 !important;
+  stroke: #9aa2a9 !important;
+}

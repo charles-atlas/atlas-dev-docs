@@ -1,0 +1,61 @@
+---
+title: Atlas Developer Docs
+description: Developer documentation for the Atlas critical-minerals derivatives and reference-price platform.
+template: splash
+hero:
+  tagline: A critical-minerals perpetuals exchange, a multi-source reference-price oracle, and a real-NAV liquidity vault — one codebase family.
+  actions:
+    - text: Explore the exchange
+      link: exchange/overview/
+      icon: right-arrow
+      variant: primary
+    - text: API reference
+      link: exchange/api-reference/
+      icon: open-book
+      variant: minimal
+---
+
+import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+Atlas is a **critical-minerals derivatives and reference-price platform**, built around
+four product surfaces that share one codebase family. The stack is deliberately small:
+a Python FastAPI application per environment, a separate oracle capture process, and
+PostgreSQL. Changes are developed locally, soaked on a staging environment that mirrors
+production, and only then promoted through a controlled, manually-gated path.
+
+## The four surfaces
+
+<CardGrid>
+  <Card title="Perpetuals exchange" icon="bars">
+    A central-limit-order-book perpetual-futures venue: 10 markets across 7 metals
+    (lithium, cobalt, nickel, copper, aluminum, zinc, silver) plus 3 composite indices.
+    dYdX-v4-shaped REST + WebSocket, a Phase-1 matching engine, funding, liquidations,
+    and margin/risk controls.
+  </Card>
+  <Card title="Reference-price oracle" icon="magnifier">
+    A multi-tier, multi-source price oracle blended by liquidity-weighted median into
+    per-mineral reference rates and index levels, plus the perp-implied *Atlas Spot*
+    engine. Published as a licensed feed — public view time-delayed, licensees real-time.
+  </Card>
+  <Card title="Liquidity vault (Earn)" icon="star">
+    A real-NAV, real-shares vault whose deposits back the exchange's market maker. NAV
+    tracks the market-making account's actual equity, with a first-loss buffer and an
+    MMF-style share-price wrapper.
+  </Card>
+  <Card title="Atlas Swaps" icon="random">
+    A block / RFQ swaps workflow for institutional flow, consuming the oracle as its
+    pricing reference.
+  </Card>
+</CardGrid>
+
+## Start here
+
+<CardGrid>
+  <LinkCard title="Exchange overview" description="The service anatomy, request flow, and subsystems." href="exchange/overview/" />
+  <LinkCard title="API reference" description="REST + WebSocket endpoints, auth, rate limits, data delay." href="exchange/api-reference/" />
+  <LinkCard title="Oracle overview" description="The tiered blend design and the Atlas Spot thesis." href="oracle/overview/" />
+  <LinkCard title="Vault accounting" description="NAV, shares, buffer, and the honest-return model." href="vault/vault-accounting/" />
+  <LinkCard title="Risk overlay" description="The concentration-at-risk control on the market-making book." href="vault/risk-overlay/" />
+  <LinkCard title="Glossary" description="Every term of art in one place." href="reference/glossary/" />
+  <LinkCard title="Roadmap" description="What's planned and in development — everything else here is live today." href="roadmap/" />
+</CardGrid>
