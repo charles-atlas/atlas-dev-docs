@@ -1,9 +1,9 @@
 ---
-title: Atlas Developer Docs
+title: Atlas Docs
 description: Developer documentation for the Atlas critical-minerals derivatives and reference-price platform.
 template: splash
 hero:
-  tagline: A critical-minerals perpetuals exchange, a multi-source reference-price oracle, and a real-NAV liquidity vault — one codebase family.
+  tagline: A critical-minerals perpetuals exchange, a multi-source reference-price oracle, and an in-venue market-making book — one codebase family.
   actions:
     - text: Explore the exchange
       link: exchange/overview/
@@ -37,10 +37,11 @@ production, and only then promoted through a controlled, manually-gated path.
     per-mineral reference rates and index levels, plus the perp-implied *Atlas Spot*
     engine. Published as a licensed feed — public view time-delayed, licensees real-time.
   </Card>
-  <Card title="Liquidity vault (Earn)" icon="star">
-    A real-NAV, real-shares vault whose deposits back the exchange's market maker. NAV
-    tracks the market-making account's actual equity, with a first-loss buffer and an
-    MMF-style share-price wrapper.
+  <Card title="Market-making book" icon="star">
+    An automated market-making book that quotes every Atlas market from one engine,
+    co-located in-process with the matching engine. Its economics are the engine's
+    spread capture net of adverse selection, measured today against simulated flow in
+    the test environment.
   </Card>
   <Card title="Atlas Swaps" icon="random">
     A block / RFQ swaps workflow for institutional flow, consuming the oracle as its
@@ -54,7 +55,6 @@ production, and only then promoted through a controlled, manually-gated path.
   <LinkCard title="Exchange overview" description="The service anatomy, request flow, and subsystems." href="exchange/overview/" />
   <LinkCard title="API reference" description="REST + WebSocket endpoints, auth, rate limits, data delay." href="exchange/api-reference/" />
   <LinkCard title="Oracle overview" description="The tiered blend design and the Atlas Spot thesis." href="oracle/overview/" />
-  <LinkCard title="Vault accounting" description="NAV, shares, buffer, and the honest-return model." href="vault/vault-accounting/" />
   <LinkCard title="Risk overlay" description="The concentration-at-risk control on the market-making book." href="vault/risk-overlay/" />
   <LinkCard title="Glossary" description="Every term of art in one place." href="reference/glossary/" />
   <LinkCard title="Roadmap" description="What's planned and in development — everything else here is live today." href="roadmap/" />

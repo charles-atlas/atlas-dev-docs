@@ -149,65 +149,15 @@ One crisp definition per term of art used across these docs.
 : The periodic cash transfer between longs and shorts at the funding rate, with a
   per-interval clamp.
 
-## Vault & market making
+## Market making & risk
 
 **VaultMM**
 : The protocol's own market maker: a single accounting book quoting a multi-level,
   post-only two-sided ladder into every market's CLOB, managing inventory via
   spread skew, staleness-aware widening, and the concentration overlay.
 
-**Liquidity Vault (Earn vault)**
-: The LP product wrapping the VaultMM book: depositors hold shares whose net asset
-  value tracks the market maker's real equity.
-
-**NAV**
-: Net asset value of the vault — defined as the market-making book's real equity
-  (cash plus inventory marked at the risk mark), never a fabricated accrual.
-
-**MMF wrapper**
-: The money-market-fund-style share accounting: at or above par the share price is
-  pegged at $1 and gains are paid as newly minted shares; below par the share price
-  floats and recovers on a high-water mark.
-
-**First-loss buffer**
-: A capped house-funded cushion that absorbs the gap between the book's raw return
-  and the target carry — smoothing LP returns and taking the first loss in a
-  drawdown.
-
-**Break the buck**
-: The event of the share price falling below par; deep impairment hard-pauses new
-  deposits to protect incoming LPs.
-
-**High-water mark**
-: The recovery rule below par: the share price must regain its prior peak before
-  gains are again distributed as minted shares.
-
-**Capture bps**
-: The legacy calibrated scalar (basis points of venue volume) once used to accrue
-  vault yield; retained as a reported constant after the real-equity model replaced
-  it as the accrual mechanism.
-
-**return_index**
-: The deposit-neutral "value of $1" index: it compounds only the vault's applied
-  per-tick return, so deposits and withdrawals cannot distort it. The honest basis
-  for realized-return measurement.
-
-**raw_return_index**
-: The parallel index compounding the *unshaped* per-tick book return — before
-  buffer smoothing — from which the emergent APY is measured.
-
-**Emergent APY**
-: The realized headline yield: the annualized cumulative growth of the raw return
-  index over a trailing window, rather than a promised target. Short windows are
-  acknowledged as statistically unresolvable; the trend of the buffer is the
-  secondary signal.
-
-**Deposit-neutral**
-: Any flow or accounting operation constructed so it cannot move the return index —
-  it changes assets and shares together, never the value of an existing share.
-
 **CaR (capital-at-risk)**
-: The vault's per-market risk unit: absolute inventory notional times the initial
+: The market-making book's per-market risk unit: absolute inventory notional times the initial
   margin ratio. Deliberately computed with the same constants in the engine, the
   measurement collector, and the public page so all surfaces agree.
 
@@ -257,7 +207,7 @@ One crisp definition per term of art used across these docs.
 
 **Shock library**
 : A curated set of historically-calibrated stress scenarios replayed against the
-  vault risk model to estimate tail outcomes.
+  market-making book's risk model to estimate tail outcomes.
 
 ## Settlement & platform
 
@@ -280,5 +230,5 @@ One crisp definition per term of art used across these docs.
 : The OTC workflow product (RFQ, blocks, swaps) built alongside the exchange; a
   future source of Class C reference input under the anti-circularity rule.
 
-**Prod-replica, delayed view, emergent APY** — see their entries above; these three
-recur throughout the operational docs.
+**Prod-replica, delayed view** — see their entries above; these recur throughout
+the operational docs.

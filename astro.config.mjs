@@ -42,10 +42,10 @@ export default defineConfig({
     // astro-mermaid must come before starlight
     mermaid({ theme: 'default', autoTheme: true }),
     starlight({
-      title: 'Atlas Developer Docs',
+      title: 'Atlas Docs',
       description:
-        'Developer documentation for the Atlas critical-minerals derivatives and reference-price platform.',
-      tagline: 'Critical-minerals perpetuals, reference-price oracle, and liquidity vault.',
+        'Documentation for the Atlas critical-minerals derivatives and reference-price platform.',
+      tagline: 'Critical-minerals perpetuals, a multi-source reference-price oracle, and an integrated market-making book.',
       customCss: ['katex/dist/katex.min.css', './src/styles/atlas.css'],
       pagination: true,
       lastUpdated: false,
@@ -66,10 +66,9 @@ export default defineConfig({
           ],
         },
         {
-          label: 'Vault',
+          label: 'Market making',
           items: [
             { label: 'How the market maker works', link: '/vault/market-making/' },
-            { label: 'Vault accounting', link: '/vault/vault-accounting/' },
             { label: 'Risk overlay', link: '/vault/risk-overlay/' },
             { label: 'Offline simulation', link: '/vault/offline-sim/' },
           ],

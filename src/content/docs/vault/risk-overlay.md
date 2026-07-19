@@ -2,7 +2,7 @@
 title: "The CaR Concentration Overlay"
 ---
 
-A portfolio-level concentration control designed for the vault's market-making
+A portfolio-level concentration control designed for the market-making
 book. It is deliberately a **risk overlay, not a strategy**: it is passive, never
 forecasts price, and never crosses the spread. This page describes **how the
 control works** by design.
@@ -26,7 +26,7 @@ the whole book's risk.
 
 The motivating observation: lithium's cap is 40 units ≈ $960k notional, so a live
 ~$177k lithium inventory read as *normal* on its own axis — while being **~33% of
-the book's total capital-at-risk**. At that point the vault is warehousing mineral
+the book's total capital-at-risk**. At that point the book is warehousing mineral
 beta, not earning market-making edge. Nothing in the system looked at portfolio
 share. This overlay does.
 
@@ -82,11 +82,11 @@ Design choices worth defending in review:
   price (L1), then size (L2), then side (L3) — so the book leans against
   concentration long before it must act drastically.
 - **Asymmetric by construction.** Every action touches only the risk-increasing
-  side. The vault keeps providing liquidity in the direction that heals the book,
+  side. The book keeps providing liquidity in the direction that heals itself,
   so the overlay never widens the market as a whole.
 - **Jittered hard threshold.** The L3 trigger carries ±0.02 random jitter so the
   exact unwind point is not a predictable signal an adversary can lean on.
-- **Passive unwind.** Even at L3 the vault only *stops quoting* the bad side. It
+- **Passive unwind.** Even at L3 the book only *stops quoting* the bad side. It
   never crosses the spread to force-flatten — an unwind that pays the spread
   converts a concentration problem into a realized-loss problem.
 - **Engine/telemetry parity.** Same CaR formula, same IMR as the measurement
@@ -106,7 +106,7 @@ guardrails should be *soft* — bend the book's economics against concentration
 rather than slam position limits shut on a book that is, so far, being paid fairly
 for the inventory it holds. The ladder's thresholds and gains encode exactly that
 posture, and the defaults (0.35 / 0.35 / 0.45 / 0.50) leave the observed 41.5% peak
-inside L1/L2 territory — shaped, not banned.
+inside L1/L2 territory — steered, not banned.
 
 ## What this is — and isn't
 

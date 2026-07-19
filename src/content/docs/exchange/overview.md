@@ -34,7 +34,7 @@ cost is that in-memory state matters — see the restart-behavior warning below.
 | Oracle consumer | `oracle_guard.py` | Staleness / clamp / halt state machine over the external oracle blend; falls back to the v1 scrape when the blend is missing or stale; persisted halts |
 | Orders & CLOB | `clob_engine.py`, `matching_core.py` | Full price-time-priority CLOB matching engine per market — FIFO within a price level, LIMIT/MARKET orders, partial fills, post-only, reduce-only, self-trade prevention, deterministic ordering; pure fill arithmetic (`apply_fill`, `compute_liquidation_price`) kept free of I/O |
 | Positions, margin, liquidation | `risk_engine.py` + monolith tasks | Margin checks, authoritative margin recompute, risk-mark updates, stop triggers, liquidation monitor |
-| Vault / Earn | `vault_mm.py` + vault routes | The VaultMM market maker (posts the real CLOB quotes) and the real-NAV/real-shares vault accounting |
+| Market-making book | `vault_mm.py` | The VaultMM market maker that posts the real CLOB quotes for every market |
 | Settlement-rail client | `canton_client.py`, `canton_commands.py`, `canton_shadow.py` | Distributed-ledger settlement-rail client with a durable holdings mirror — real command/settlement code, **integrated but under controlled activation** (fail-closed, not actively settling in production today; activation is a [roadmap](/roadmap/) item). See the settlement-rail page |
 | Growth | in `server_v2.py` | Leaderboard, rewards/points, referrals, notifications, portfolio history (see the growth & sim page) |
 | Simulated flow | in `server_v2.py` | Built-in simulated trader flow and a sim-clock speed knob (see the growth & sim page) |
@@ -135,7 +135,6 @@ Registered in the FastAPI lifespan (the staging build adds the last two):
 | `stop_trigger_monitor` | Trigger resting STOP orders |
 | `snapshot_retention` / `partition_maintenance` | Prune snapshots; maintain monthly trade/candle partitions |
 | `maps_sweep` | Periodic in-memory map hygiene |
-| `vault_accrual` | Vault NAV/share accounting accrual |
 | `user_sim_runner` | Simulated trader flow (see growth & sim) |
 | `data_delay_refresher` | Maintain the delayed public oracle view |
 | `equity_snapshotter` | Account equity time series (portfolio history, leaderboard PnL) |

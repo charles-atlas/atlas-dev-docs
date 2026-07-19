@@ -11,7 +11,7 @@ from a simulation rather than a market, it says so.
 :::danger[The load-bearing caveat]
 The exchange's counterparty flow is currently **simulated** (a house flow model in a
 test environment). Therefore the market maker's realised spread capture, its markout,
-and the vault's yield are **outputs of that flow model, not evidence of edge against
+and the book's P&L are **outputs of that flow model, not evidence of edge against
 real order flow.** No performance number on this site should be read as a validated,
 real-market result. What is validated is the *engineering* (the matching engine,
 settlement, accounting invariants) and the *internal consistency* of the models — not
@@ -26,7 +26,7 @@ their P&L against real adverse selection.
 | Reference-price oracle | Live external market data (a small number of sources) | Real prices; thin source set (see [oracle overview](/oracle/overview/)) |
 | Index construction | Live constituent references | Exact identity; sound |
 | Market-maker quoting | Real book, **simulated** taker flow | Quotes are real; the counterparty it profits from is a model |
-| Vault NAV / APY | Tracks the MM account's real equity — **against simulated flow** | Accounting is honest; the P&L it accrues is not real-flow P&L |
+| Market-making book P&L | Tracks the MM account's real equity — **against simulated flow** | Accounting is honest; the P&L it accrues is not real-flow P&L |
 | Funding settlement | Real per-position settlement | Mechanics real; the funding *design* is incomplete (below) |
 
 ## Model maturity
@@ -77,8 +77,8 @@ simulation, not a forecast of live results.
 The assumptions most likely to be wrong, stated up front:
 
 - **Simulated flow is representative.** The informed-flow fraction and order-size
-  distribution are hand-set. Real flow could be materially more toxic; the vault
-  buffer is sized against the *simulated* loss distribution, not a real one.
+  distribution are hand-set. Real flow could be materially more toxic; the risk
+  reserve is sized against the *simulated* loss distribution, not a real one.
 - **Per-market risk is separable.** The CaR overlay treats each market's concentration
   independently. Lithium/cobalt/nickel are highly correlated, so true portfolio risk
   is understated and the overlay may act late in a joint drawdown.

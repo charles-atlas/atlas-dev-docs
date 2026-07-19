@@ -1,6 +1,6 @@
 ---
 title: Roadmap
-description: Planned and in-development capabilities across the Atlas oracle, exchange, and vault. Everything here is future-state; the rest of the docs describe what is live today.
+description: Planned and in-development capabilities across the Atlas oracle, exchange, and market-making book. Everything here is future-state; the rest of the docs describe what is live today.
 ---
 
 The rest of these docs describe what Atlas runs **today**. This page is the forward
@@ -72,12 +72,12 @@ into the live docs only when it is actually running in production.
 - **Third-party liquidity** *(Planned)* — deepening the order books with external
   participant flow; today's test-environment liquidity is house-provided.
 
-## Vault & liquidity
+## Market-making book
 
 - **Portfolio concentration control in production** *(Staging-validated)* — the
   capital-at-risk concentration overlay is armed and exercised in the staging soak;
   promotion to production follows the A/B-from-flat validation.
-- **External-venue market-making** *(Planned)* — extending the vault market maker to
+- **External-venue market-making** *(Planned)* — extending the market-making book to
   quote on external venues. Today it makes markets only in the Atlas order book.
 
 ## Governance & benchmark administration

@@ -156,17 +156,6 @@ Cancel a resting order (ownership-checked).
 
 ---
 
-## Vault
-
-- `GET /v4/vault` *(public)* — vault TVL, APY, share price, depositors; include
-  `X-API-Key` to also get `userPosition`.
-- `GET /v4/vault/history` *(public)* — NAV/share-price time series.
-- `POST /v4/vault/deposit` *(auth)* — `{ amount }` mints shares at the live price.
-- `POST /v4/vault/withdraw` *(auth)* — `{ amount }`, `{ shares }`, or
-  `{ all: true }`.
-
----
-
 ## Growth
 
 - `GET /v4/leaderboard` *(public)* — ranked traders by realised PnL / volume;
@@ -310,13 +299,6 @@ Routes marked *(alias)* also exist without the `/v4` prefix.
 | `DELETE /v4/orders/{id}` · `POST /v4/orders/{id}/cancel` | Cancel |
 | `POST /v4/faucet` *(alias)* | Demo funds faucet |
 | `POST /v4/withdraw/request` | Signed withdraw request |
-
-### Vault
-
-| Route | Purpose |
-|---|---|
-| `GET /v4/vault` · `GET /v4/vault/history` | Vault state + series |
-| `POST /v4/vault/deposit` · `POST /v4/vault/withdraw` | Move funds |
 
 ### Canton rail
 

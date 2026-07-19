@@ -24,7 +24,13 @@ jobs:
           if grep -rniE '([0-9]{1,3}\.){3}[0-9]{1,3}|[a-z0-9-]+\.ts\.net|[a-z0-9-]+\.local\b|root@|atlas-ops|\blaunchctl\b|\bsystemctl\b|:30[0-9][0-9]\b|:7878\b|:5432\b' src/content/docs; then
             echo "::error::Infrastructure string found in docs content — refusing to publish."; exit 1;
           fi
-          echo "Guard clean."
+          echo "Infra guard clean."
+      - name: No vault-economics vocabulary in published docs
+        run: |
+          if grep -rniE 'deposit|depositor|\bLPs?\b|share.price|share_price|vault_shares|target tick|raw return|return_index|emergent APY|first-loss|break-the-buck|\bTVL\b|shaped carry|shaped yield' src/content/docs; then
+            echo "::error::Vault-economics vocabulary found — refusing to publish."; exit 1;
+          fi
+          echo "Vault-vocab guard clean."
 
   build:
     needs: guard

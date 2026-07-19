@@ -2,8 +2,9 @@
 title: "Offline Simulation Harness (`sim/`)"
 ---
 
-The `sim/` directory in the repo is the vault's **offline quant laboratory**: pure,
-reproducible Python that models the market-making book, stress-tests it against a
+The `sim/` directory in the repo is the **offline quant laboratory** for the
+market-making book: pure,
+reproducible Python that models the book, stress-tests it against a
 calibrated shock library, and sizes the risk controls — *before* anything is
 deployed to staging. Nothing in `sim/` touches a live system; it is the first stage
 of a deliberate offline → staging → production pipeline. The harness feeds staged
@@ -30,17 +31,16 @@ traders, toxic momentum-followers, and competing external market makers — with
 helpful steering of any kind. Its purpose is to answer "what does this book earn
 under honest conditions?" before staging ever runs.
 
-Its structural findings shaped the product framing: the target carry is reachable
+Its structural findings: the target carry is reachable
 only at **mature volume with limited competition**; realistic early-stage
 conditions (low volume, several competitors) earn far less; and an uncontested
-benign-flow book earns far *more* than any displayed number — which is why the
-displayed yield is a shaped carry rather than the raw book return (the full
-lineage lives in a CAUTION-tier page).
+benign-flow book earns far *more* than a competitive one — the book's economics
+are dominated by volume and competition, not by any single quoting parameter.
 
 :::note[Known caveat]
 
 The Stage A harness holds the oracle price flat, so tail outcomes and
-break-the-buck probabilities are **understated** there. Tail risk is the job of
+cumulative-loss probabilities are **understated** there. Tail risk is the job of
 `vault_model.py` and the shock library below.
 
 :::
@@ -67,49 +67,48 @@ are pinned by tests.
 - stochastic volume (OU process) *correlated with* shocks;
 - structural inventory skew — the book ends up net short the crowded
   battery/index "story" minerals;
-- first-loss buffer accrual and depletion;
-- break-the-buck modeled as a **cumulative-loss** event with a severity ladder
-  (par / 0.99 / 0.95 / 0.90).
+- loss-reserve accrual and depletion;
+- a **cumulative-loss** event modeled with a severity ladder
+  (1.00 / 0.99 / 0.95 / 0.90).
 
 **3. Uncertainty is the product, not a footnote:**
 
 - seed-varied ensembles → P5/P50/P95 fans;
-- Wilson intervals on P(break-the-buck); cluster-bootstrap CIs;
+- Wilson intervals on P(cumulative-loss breach); cluster-bootstrap CIs;
 - Sharpe / Sortino / Calmar / VaR / CVaR / drawdown metrics;
 - calibration + PIT/coverage backtests against the live soak database.
 
 Headline defaults at a $1M seed: net capture ~3.6 bps dollar-weighted;
-break-the-buck ~12%/yr, but severity below 0.90 only ~1.5%; and a yield trajectory
-that **compresses toward a ~25% multi-year flow equilibrium** as capital arbitrages
-the return down (`elasticity = 3.5`, `apy_eq = 0.25`). Parameters double as a map
+a cumulative-loss breach ~12%/yr, but severity below 0.90 only ~1.5%. Parameters
+double as a map
 of the risk surface: `fee_bps = 7.5` gross, `adverse_k = 0.45`,
 `spread_floor = 0.006`, `retain_days = 15`, `base_buf = 0.03`,
 `shock_lambda = 24/yr`, `crash_p = 0.003/day`, with position caps treated as a
-capacity bound (fixed at launch, so more TVL mechanically lowers risk — a
+capacity bound (fixed at launch, so more capital mechanically lowers risk — a
 self-correcting dynamic).
 
 ## SOAK_PLAN — the four multiplicative controls
 
 Phase-1 Monte-Carlo sweeps (S1–S6, `vault_risk_sim.py`) searched for a launch
 configuration and found a sharp interaction: **dropping any one control pushes
-break-the-buck to ~90–100%/yr; all four together push it to ~0%.** They multiply —
-none is optional.
+the cumulative-loss breach rate to ~90–100%/yr; all four together push it to ~0%.**
+They multiply — none is optional.
 
 | # | Control | Status |
 |---|---|---|
 | 1 | **Liquidity-adaptive spread floor** — wide-when-thin; "tight + thin" is the only unsafe combination | **Deployed** to the staging engine (behind a flag) |
 | 2 | **Risk-based per-market caps** — an 8%-of-capital loss budget divided by stress vol | Not yet built as designed; a partial notional backstop exists behind a flag |
-| 3 | **Rolling retention buffer** — ≥ 15 days of revenue held as first-loss | Not yet built; the current buffer is return-shaped, not revenue-retention |
-| 4 | **Portfolio/netting margin** for the vault's book | Not built; sized by `portfolio_margin_sim.py` — ~3x capital efficiency in balanced operation but only ~1.5x in a correlated crash, so solvency must be sized to the 1.5x case |
+| 3 | **Rolling retention buffer** — ≥ 15 days of revenue held as a loss-absorption reserve | Not yet built; the current buffer is not revenue-retention |
+| 4 | **Portfolio/netting margin** for the market-making book | Not built; sized by `portfolio_margin_sim.py` — ~3x capital efficiency in balanced operation but only ~1.5x in a correlated crash, so solvency must be sized to the 1.5x case |
 
 ## The shock library
 
 `shock_library.py` encodes 32 shocks calibrated to real critical-minerals events,
 in three severity bands across 10 event types. Stress results:
 
-- **27 of 32 scenarios survive** without breaking the buck;
-- **all 5 break-the-buck events are battery metals** — worst case a cobalt +167%
-  supply shock (DRC-style) driving a −29% NAV outcome;
+- **27 of 32 scenarios survive** without a cumulative-loss breach;
+- **all 5 breaches are battery metals** — worst case a cobalt +167%
+  supply shock (DRC-style) driving a −29% book drawdown;
 - **baskets beat their worst constituent** — index diversification works as
   designed;
 - residual risk is therefore the **battery tail**: roughly a 1-in-8-to-16-year

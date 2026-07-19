@@ -1,12 +1,11 @@
 ---
-title: "How the Vault Market Maker Works"
+title: "How the Market-Making Book Works"
 ---
 
-The vault is backed by a single automated **market maker** (the "VaultMM") that
-quotes every Atlas market from one engine. It is the counterparty behind the
-Liquidity Vault: the vault's NAV tracks the market-making account's *real* equity,
-so the maker's spread capture, net of adverse selection, **is** the vault's yield.
-This page describes how it makes markets today.
+The market-making book is run by a single automated **market maker** (the "VaultMM")
+that quotes every Atlas market from one engine. The engine's spread capture, net of
+adverse selection, **is** the book's P&L, tracked from the market-making account's
+*real* equity. This page describes how it makes markets today.
 
 :::note[Test-environment liquidity]
 
@@ -32,7 +31,7 @@ the whole book at once.
 
 Depth is **not** spread evenly. Each market receives a share of the maker's capital
 set by its **configured weight**, scaled by a utilization target, with the remainder
-held back as a first-loss buffer. That capital is split across both sides of the
+held back as a risk reserve. That capital is split across both sides of the
 book and across ladder levels, so a heavier-weighted market carries a deeper book
 than a thin one. The result is a book whose depth per market is intentional and
 proportional, not uniform.
@@ -135,8 +134,8 @@ Left unchecked, a maker capturing full spread against uninformed flow would post
 unrealistically high return. The engine deliberately models **adverse selection**: a
 calibrated fraction of flow trades *with* the prevailing momentum, so the maker
 takes on inventory that then moves against it. That toxic-flow cost pulls the
-modeled return down to a realistic level — which is the point, because the vault's
-NAV tracks the maker's *real* equity, and the first-loss buffer has to be a genuine
+modeled return down to a realistic level — which is the point, because the book's
+P&L tracks the maker's *real* equity, and the risk reserve has to be a genuine
 variance cushion rather than a cosmetic one.
 
 ## The order-book-integration advantage — and the benchmark boundary
@@ -157,7 +156,7 @@ The maker benefits from co-location with the *matching engine*. The *reference r
 is a different thing: Atlas's own order book, its mid, and Atlas Spot are
 **structurally excluded** from reference-rate formation (the anti-circularity /
 self-reference rule described in the [oracle overview](/oracle/overview/)). The
-per-market **mark** and vault P&L are venue-internal and never feed the benchmark.
+per-market **mark** and the book's P&L are venue-internal and never feed the benchmark.
 So the maker can have an execution advantage inside the venue while the benchmark
 remains independent of Atlas execution data — the two do not conflict.
 
