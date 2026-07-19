@@ -108,5 +108,35 @@ for the inventory it holds. The ladder's thresholds and gains encode exactly tha
 posture, and the defaults (0.35 / 0.35 / 0.45 / 0.50) leave the observed 41.5% peak
 inside L1/L2 territory — shaped, not banned.
 
+## What this is — and isn't
+
+The overlay is a **governance control on notional concentration**, not a portfolio-risk
+model. It caps how much of the book's capital-at-risk any single market may represent;
+it does not model the *joint* risk of the book.
+
+That distinction matters most exactly where this book is exposed. CaR here sums
+per-market `|inv × mark| × IMR` and manages each market's *share* — which treats the
+markets as if their risks were separable. They are not: the battery complex (lithium,
+cobalt, nickel) and several AI-basket constituents are strongly correlated, so
+
+- a single **joint** drawdown across correlated minerals can arrive without any one
+  market crossing its concentration threshold, and
+- summing per-market CaR overstates the diversification benefit, while a per-market
+  *share* understates true joint exposure.
+
+The target is a covariance-based portfolio-risk layer that replaces the notional sum
+with a distributional measure:
+
+$$
+\text{VaR}_\alpha,\ \text{ES}_\alpha \;=\; f\!\big(\mathbf{w}^{\top}\boldsymbol{\Sigma}\,\mathbf{w}\big),
+\qquad \boldsymbol{\Sigma} = \operatorname{cov}(\text{mineral returns})
+$$
+
+with the correlation structure of the battery/AI complex estimated and updated, and
+inventory sized to an expected-shortfall budget rather than a per-market notional cap.
+Today the 95% / 1-day VaR is computed for **display only**; making it the control
+objective (and validating it against a crisis regime) is [roadmap](/roadmap/) work — see
+[Model status & validation](/model-status/).
+
 Promotion of the overlay to the production build is tracked on the
 [Roadmap](/roadmap/).

@@ -74,6 +74,7 @@ export default defineConfig({
             { label: 'Offline simulation', link: '/vault/offline-sim/' },
           ],
         },
+        { label: 'Model status & validation', link: '/model-status/' },
         {
           label: 'Surfaces',
           items: [{ label: 'Atlas Swaps', link: '/surfaces/atlas-swaps/' }],
