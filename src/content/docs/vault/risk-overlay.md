@@ -7,16 +7,6 @@ book. It is deliberately a **risk overlay, not a strategy**: it is passive, neve
 forecasts price, and never crosses the spread. This page describes **how the
 control works** by design.
 
-:::note[Staging validation — not yet in the production build]
-
-The concentration overlay is a designed control that is currently **armed on the
-staging soak**, where it runs with ladder defaults to bleed down existing
-concentration. It is **not part of the production build** — the code default
-remains off, and production does not carry the overlay. It is slated for
-production once validated. See the [Roadmap](/roadmap/) for promotion status.
-
-:::
-
 ## The gap it closes
 
 Every pre-existing control — inventory tiers, quote skew, the one-sided cutoff —
