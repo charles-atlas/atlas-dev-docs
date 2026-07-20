@@ -18,8 +18,9 @@ additions (the "v3" features) that have not yet been promoted to production.
 
 "Monolith" here is an architectural fact, not an accident: a single process owns
 the order books, the risk marks, the WebSocket fan-out, and the settlement path,
-which keeps the matching-to-settlement flow in one transaction boundary. The
-cost is that in-memory state matters — see the restart-behavior warning below.
+which keeps the matching-to-settlement flow in one transaction boundary. Durable
+state — orders, trades, positions, balances, and halts — lives in the database,
+so a restart **rehydrates** the in-memory books from it rather than losing them.
 
 :::
 ---
@@ -144,16 +145,6 @@ Registered in the FastAPI lifespan (the staging build adds the last two):
 | `soak_shock_injector` *(staging only)* | Soak-test shock injection |
 | `v3_oracle_refresher` *(staging only)* | Oracle v3 layer refresh |
 
-:::caution[In-memory vs durable state on restart]
-
-CLOB books, marks, response caches, and MM state are in-memory and are
-**rebuilt, not preserved**, across a restart. The load-bearing rule, learned the
-hard way: *a restart must not silently clear a live halt* — halts and the
-settlement-rail holdings mirror are persisted in dedicated tables and restored
-at boot. Any **new** cache added to `server_v2.py` must follow the same
-persist-and-restore pattern.
-
-:::
 :::note[Environment flags]
 
 Behavior toggles are environment variables (names only, never values):
