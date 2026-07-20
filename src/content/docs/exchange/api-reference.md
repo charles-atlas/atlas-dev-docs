@@ -238,7 +238,7 @@ and not subject to the delay.
 
 ## Full route map
 
-The complete surface (~77 routes) as registered in `server_v2.py`, one line each.
+The complete surface (~77 routes), one line each.
 Routes marked *(alias)* also exist without the `/v4` prefix.
 
 ### Health & config
@@ -261,7 +261,6 @@ Routes marked *(alias)* also exist without the `/v4` prefix.
 | `GET /v4/atlas-spot` | Perp-implied spot per market |
 | `GET /v4/oracle` *(aliases `/oracle`, `/prices`)* | Reference prices (delayed publicly) |
 | `GET /v4/oracle/health` *(staging build)* | Oracle self-check: anchor venue, ages, spreads, basket gap |
-| `GET /v4/intelligence/feed` | News/intelligence feed |
 | `GET /v4/leaderboard` | Public leaderboard |
 | `WS /ws` | Realtime stream |
 

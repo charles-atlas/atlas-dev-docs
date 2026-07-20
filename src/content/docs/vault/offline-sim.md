@@ -89,7 +89,7 @@ self-correcting dynamic).
 
 ## SOAK_PLAN — the four multiplicative controls
 
-Phase-1 Monte-Carlo sweeps (S1–S6, `vault_risk_sim.py`) searched for a launch
+Monte-Carlo sweeps (S1–S6, `vault_risk_sim.py`) searched for a launch
 configuration and found a sharp interaction: **dropping any one control pushes
 the cumulative-loss breach rate to ~90–100%/yr; all four together push it to ~0%.**
 They multiply — none is optional.

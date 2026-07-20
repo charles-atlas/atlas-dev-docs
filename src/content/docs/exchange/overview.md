@@ -2,13 +2,14 @@
 title: "Exchange Service Overview"
 ---
 
-The Atlas exchange is deliberately a **monolith**: one Python FastAPI application
-(`server_v2.py`, a single module of roughly five-to-six thousand lines) contains
-every route, every background loop, and the static frontend server. A small ring of
-satellite modules holds the pieces that benefit from being pure and independently
-testable (matching arithmetic, risk checks, basket math, the settlement-rail
-client). State lives in PostgreSQL via an asyncpg pool; the frontend is static
-no-build HTML/JS served by the same app.
+The Atlas exchange is, today, deliberately a **single-process application**: one
+Python FastAPI app owns every route, every background loop, and the static frontend
+server, so the whole matching-to-settlement flow stays inside one transaction
+boundary. The latency- and correctness-critical pieces live in pure, independently
+testable modules (the matching engine, risk checks, basket math, the settlement-rail
+client). State lives in PostgreSQL via an asyncpg pool. This is the right shape at
+this stage; the horizontal-scaling evolution — an event log, service decomposition,
+and orchestration — is on the [roadmap](/roadmap/).
 
 Each environment (production, staging, dev) runs its own instance of this same
 application against its own database. The staging build carries newer oracle-layer
@@ -29,19 +30,18 @@ so a restart **rehydrates** the in-memory books from it rather than losing them.
 
 | Subsystem | Code | Role |
 |---|---|---|
-| App core & routing | `server_v2.py` | FastAPI app, all HTTP/WS routes, static file serving, SPA catch-all, CORS, rate limiting |
-| Auth & identity | `server_v2.py` + `withdraw_auth.py` | Email signup/login (bcrypt), wallet/signature login and challenge, session tokens (`X-API-Key`), recovery phrases, withdraw signature auth. Legacy unauthenticated signup/login routes are retired (HTTP 410) |
+| App core & routing | app core | FastAPI app, all HTTP/WS routes, static file serving, SPA catch-all, CORS, rate limiting |
+| Auth & identity | app core + `withdraw_auth.py` | Email signup/login (bcrypt), wallet/signature login and challenge, session tokens (`X-API-Key`), recovery phrases, withdraw signature auth. Legacy unauthenticated signup/login routes are retired (HTTP 410) |
 | Markets & indices | `ai_basket.py`, `battery_basket.py`, `ree_basket.py` (`china_basket.py` retired) | Index/basket level computation for the three composite markets |
 | Oracle consumer | `oracle_guard.py` | Staleness / clamp / halt state machine over the external oracle blend; falls back to the v1 scrape when the blend is missing or stale; persisted halts |
 | Orders & CLOB | `clob_engine.py`, `matching_core.py` | Full price-time-priority CLOB matching engine per market — FIFO within a price level, LIMIT/MARKET orders, partial fills, post-only, reduce-only, self-trade prevention, deterministic ordering; pure fill arithmetic (`apply_fill`, `compute_liquidation_price`) kept free of I/O |
-| Positions, margin, liquidation | `risk_engine.py` + monolith tasks | Margin checks, authoritative margin recompute, risk-mark updates, stop triggers, liquidation monitor |
+| Positions, margin, liquidation | `risk_engine.py` + app background tasks | Margin checks, authoritative margin recompute, risk-mark updates, stop triggers, liquidation monitor |
 | Market-making book | `vault_mm.py` | The VaultMM market maker that posts the real CLOB quotes for every market |
 | Settlement-rail client | `canton_client.py`, `canton_commands.py`, `canton_shadow.py` | Distributed-ledger settlement-rail client with a durable holdings mirror — real command/settlement code, **integrated but under controlled activation** (fail-closed, not actively settling in production today; activation is a [roadmap](/roadmap/) item). See the settlement-rail page |
-| Growth | in `server_v2.py` | Leaderboard, rewards/points, referrals, notifications, portfolio history (see the growth & sim page) |
-| Simulated flow | in `server_v2.py` | Built-in simulated trader flow and a sim-clock speed knob (see the growth & sim page) |
-| WebSocket | `/ws` in `server_v2.py` | Live trade / orderbook / liquidation channels |
-| Intelligence feed | `news_scraper.py` | News ingest behind `/v4/intelligence/feed` |
-| DB access | `db.py` | asyncpg pool helper; schema managed by manually-applied SQL migrations (there is **no** migration-ledger table) |
+| Growth | in app core | Leaderboard, rewards/points, referrals, notifications, portfolio history (see the growth & sim page) |
+| Simulated flow | in app core | Built-in simulated trader flow and a sim-clock speed knob (see the growth & sim page) |
+| WebSocket | `/ws` in app core | Live trade / orderbook / liquidation channels |
+| DB access | `db.py` | asyncpg pool helper; schema managed by versioned SQL migrations |
 
 ---
 

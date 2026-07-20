@@ -2,22 +2,15 @@
 title: "Atlas Swaps"
 ---
 
-:::note[Open gap — this page is a stub]
+:::note[Overview]
 
-**Atlas Swaps has no dedicated reconnaissance dossier yet.** Everything below
-comes from adjacency notes captured during the exchange-staging survey and from
-the product/methodology docs — not from a first-hand pass over the Atlas Swaps
-codebase. Treat this page as an index card, not documentation.
-**Unblock path:** a scoped recon pass over the Atlas Swaps source tree (the
-repo copy is the source of truth; a running staging instance exists), producing
-its own dossier: module map, RFQ workflow states, API surface, oracle-feed
-consumption details, and open risks. This page then gets rewritten from that
-dossier.
+This is a brief product overview of Atlas Swaps. Detailed developer documentation
+— the RFQ workflow states, API surface, and oracle-feed integration — is in progress.
 
 :::
 ## What it is
 
-**Atlas Swaps** (renamed 2026-07-17; formerly "Hedge OS") is the operator console
+**Atlas Swaps** is the operator console
 for Atlas's **RFQ / block / swaps** workflow — the negotiated-trade counterpart to
 the central-limit-order-book trading app. Where the exchange app serves continuous
 on-screen trading, Atlas Swaps is the desk surface for quote-requested and

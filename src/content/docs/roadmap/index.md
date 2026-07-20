@@ -72,6 +72,34 @@ into the live docs only when it is actually running in production.
 - **Third-party liquidity** *(Planned)* — deepening the order books with external
   participant flow; today's test-environment liquidity is house-provided.
 
+## Scaling & high availability
+
+Today the exchange runs as one single-process application per environment — the right
+shape for correctness and latency at this stage, but a single node with a restart
+window and a vertical ceiling. The evolution is event-driven, and deliberately keeps
+the matching hot path intact:
+
+- **Sequenced event log** *(Planned)* — a durable, replayable message log
+  (Kafka-style) as the ordered source of truth for every order, cancel, fill, and
+  market-data event. This turns today's persist-and-rehydrate boot into continuous
+  durability plus replay, and lets hot-standby replicas follow the same log for
+  **zero-downtime failover** — closing the restart window.
+- **Per-market matching shards** *(Planned)* — horizontal scale by sharding markets
+  across matching-engine instances. The matching hot path stays a **single
+  deterministic in-memory process per shard** — the way production exchanges run it,
+  because determinism and latency come from *not* distributing the match. Scale is
+  added by adding shards, not by decomposing the engine.
+- **Service decomposition** *(Planned)* — lifting the non-latency-critical concerns
+  out of the app core into independently deployable services (oracle capture/blend,
+  risk & margin monitors, funding, settlement rail, market-data fan-out, API gateway,
+  analytics), each scaling on its own and consuming from the event log.
+- **Orchestration** *(Planned)* — Kubernetes for rolling, zero-downtime deploys,
+  autoscaling the stateless services, and running the matching shards as replicated
+  stateful workloads with standby failover.
+
+*Sequencing:* the event log is the keystone — it delivers durability, replay, and HA
+first; the service split and orchestration build on it.
+
 ## Market-making book
 
 - **Portfolio concentration control in production** *(Staging-validated)* — the
