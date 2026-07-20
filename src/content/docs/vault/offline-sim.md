@@ -20,8 +20,8 @@ tracked as roadmap validation work (see the [Roadmap](/roadmap/)).
 | `vault_risk_sim.py` | unified risk Monte-Carlo used by the SOAK_PLAN parameter sweeps (S1–S6) |
 | `portfolio_margin_sim.py` | isolated-vs-portfolio margin efficiency study |
 | `shock_library.py` | 32 real-world-calibrated shock scenarios (3 severity bands, 10 event types) |
-| `SOAK_PLAN.md`, `RESULTS.md`, `STRESS_RESULTS.md`, `SHOCK_RESEARCH.md`, `ADVERSARY_RESULTS.md`, `RED_TEAM_BRIEFING.md` | the written findings the code produced |
-| `staging-patch/` | patched copies + diffs of exactly what was later deployed to staging — the de-facto version control for staged changes |
+| written findings | a set of written findings the code produced — soak plan, stress and adversary results, shock research, and a red-team briefing |
+| `staging-patch/` | patched copies + diffs recording exactly what shipped to staging — an explicit change record for each staged control |
 
 ## Stage A — the offline MM harness
 
@@ -46,8 +46,9 @@ cumulative-loss probabilities are **understated** there. Tail risk is the job of
 :::
 ## `vault_model.py` — the pure quant core
 
-Built after a multi-agent review graded the previous dashboard model C− and iterated
-it to A−/B+ over eight review rounds. Design principles:
+`vault_model.py` is the pure Monte-Carlo risk core — a Calibrated-heuristic risk
+core on the site's Heuristic/Principled/Calibrated/Validated maturity ladder —
+built to the following design principles:
 
 **1. P&L decomposition — net capture is an *output*, never an input:**
 
@@ -86,6 +87,11 @@ of the risk surface: `fee_bps = 7.5` gross, `adverse_k = 0.45`,
 `shock_lambda = 24/yr`, `crash_p = 0.003/day`, with position caps treated as a
 capacity bound (fixed at launch, so more capital mechanically lowers risk — a
 self-correcting dynamic).
+
+This ~12%/yr headline reflects the `vault_model.py` config with only two of the
+four controls active — the loss buffer and the spread floor, not the risk-based
+caps or portfolio-margin controls; the ~0% (all four) and ~90–100%/yr (any one
+dropped) figures come from the separate multi-control sweep in `vault_risk_sim.py`.
 
 ## SOAK_PLAN — the four multiplicative controls
 

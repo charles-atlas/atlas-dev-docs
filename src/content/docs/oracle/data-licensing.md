@@ -67,18 +67,18 @@ The one dangerous moment for a delayed feed is startup: for the first
 naive fallback — serving the live value until the delayed cache warms — would
 leak real-time licensed data to unlicensed callers.
 
-The implementation fails **closed**: if no delayed sample exists yet, the API
-serves the static seed price for the market — never the live value. An
+The delayed **price** endpoints (the public reference/oracle and prices views)
+fail **closed**: if no delayed sample exists yet, they serve the static seed
+price for the market rather than the live reference. On those endpoints an
 unlicensed caller can therefore see a briefly *stale* number after a restart,
-but never a *live* one.
+not the real-time reference.
 
 ## Per-mineral health disclosure
 
-Alongside the price product, a public health readout discloses, per mineral,
+Alongside the price product, a public health readout provides, per mineral,
 the current **anchor**, its **age**, the **source count** behind the composite,
-and the cross-source **spread** — enough to judge the reference's condition
-without exposing the licensed real-time value or the underlying source
-identities.
+and the cross-source **spread** — observability signals for judging the
+reference's condition.
 
 Public funding fields are recomputed from the **delayed** reference rather than
 the live one, so the real-time rate cannot be reverse-engineered from the freely

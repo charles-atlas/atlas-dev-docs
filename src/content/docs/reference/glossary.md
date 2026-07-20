@@ -2,8 +2,8 @@
 title: "Glossary"
 ---
 
-data-source recipe (the source composition of the reference rates is licensed IP).
-One crisp definition per term of art used across these docs.
+One crisp definition per term of art used across these docs. The source composition
+of the reference rates is licensed IP.
 
 ## Pricing & oracle
 
@@ -25,19 +25,21 @@ One crisp definition per term of art used across these docs.
 
 **v3 layer**
 : A feature-flagged evolution of the oracle inside the exchange: live FX conversion
-  (replacing a hardcoded constant), China-onshore premium surfaced as data, an
-  oracle health endpoint, and index (basket) prices derived from their constituents
-  every cycle at both the oracle and mark level.
+  (an ECB-derived USD/CNY reference at ≤1h cadence) applied to all CNY-basis
+  normalization, China-onshore premium surfaced as data, an oracle health endpoint,
+  and index (basket) prices derived from their constituents every cycle at both the
+  oracle and mark level.
 
 **v3-derived**
 : The provenance label for basket prices recomputed from constituent legs each
   cycle under the v3 layer, rather than scraped or random-walked independently.
 
 **Source tiers**
-: The oracle's five-class input taxonomy, ranging from listed-venue prints (highest
-  weight) through assessment/dealer data and physical-trade surveillance down to
-  fundamentals and FX. One class — Atlas-native market data — is **deliberately
-  empty** (see self-referential exclusion).
+: The weighting hierarchy over the five input classes (A–E), ranging from
+  listed-venue prints (highest weight) through assessment/dealer data and
+  physical-trade surveillance down to fundamentals and FX. Atlas-native market data
+  sits **outside** the admissible set — excluded via the anti-circularity rule, not
+  ranked as a class (see self-referential exclusion).
 
 **Self-referential exclusion**
 : The standing rule that Atlas's own market data is excluded from the reference
@@ -119,11 +121,15 @@ One crisp definition per term of art used across these docs.
 : The real-time tier: callers whose API key is on the license allowlist (or whose
   account carries the license flag) receive the same payload without the delay.
 
-**Input classes (A–D)**
+**Input classes (A–E)**
 : The methodology's pre-declared taxonomy of admissible reference inputs:
-  A — listed-venue prints; B — PRA assessments; C — Atlas-originated transaction
-  data (swaps/blocks), admissible only under the anti-circularity rule; D —
-  sovereign producer data.
+  **A** — listed-venue reference prints *(live)*; **B** — PRA (price-reporting-agency)
+  assessments *(build)*; **C** — arm's-length transaction / OTC observations between
+  **independent counterparties** (e.g. RFQ/block prints, DCM/SEF, physical crosses),
+  admissible only under the anti-circularity rule — **Atlas's own market-making is
+  excluded** *(build)*; **D** — ground truth: trade-implied unit values *(live)* plus
+  sovereign producer-region data *(planned)*; **E** — fundamental anchors & FX (e.g.
+  an ECB-derived FX reference) *(live)*.
 
 **Anti-circularity rule**
 : The published condition governing Class C: Atlas-originated transaction data may
@@ -154,7 +160,9 @@ One crisp definition per term of art used across these docs.
 **VaultMM**
 : The protocol's own market maker: a single accounting book quoting a multi-level,
   post-only two-sided ladder into every market's CLOB, managing inventory via
-  spread skew, staleness-aware widening, and the concentration overlay.
+  spread skew, staleness-aware widening, and the concentration overlay. Two of these
+  controls — staleness-aware widening and the concentration overlay — currently run
+  in the staging/soak build and are **not yet promoted to production**.
 
 **CaR (capital-at-risk)**
 : The market-making book's per-market risk unit: absolute inventory notional times the initial
@@ -172,8 +180,9 @@ One crisp definition per term of art used across these docs.
   multiplier in the CaR definition.
 
 **VaR**
-: Value-at-risk — here a one-day, 95% inventory loss estimate from per-market
-  volatility.
+: Value-at-risk — a parametric 1-day 95% inventory-loss estimate (|inv| × σ/√252 ×
+  1.65 per market), a monitoring readout — distinct from CaR, which drives the
+  control loop.
 
 **Markout**
 : Per-fill profit decomposition measured at fixed horizons after the fill: spread

@@ -112,8 +112,8 @@ challenge, `POST /v4/auth/wallet-login` verifies the signature.
 
 :::note[Retired routes]
 
-The original `POST /v4/auth/signup` and `POST /v4/auth/login` (which minted
-unauthenticated demo accounts) are retired and return **410 Gone**.
+The original `POST /v4/auth/signup` and `POST /v4/auth/login` are retired and
+return **410 Gone**; use the email-signup / email-login routes.
 
 :::
 ---
@@ -247,7 +247,7 @@ Routes marked *(alias)* also exist without the `/v4` prefix.
 |---|---|
 | `GET /health` | Liveness + coarse counters (trades, accounts, WS clients, rail status) |
 | `GET /v4/config` | Client config: taker fee rate, rail enablement, version |
-| `GET /v4/height` *(alias)* | Block-height-shaped heartbeat (epoch-derived) |
+| `GET /v4/height` *(alias)* | dYdX-v4-compatible height endpoint; increments per epoch for client compatibility |
 
 ### Market data
 
@@ -260,7 +260,7 @@ Routes marked *(alias)* also exist without the `/v4` prefix.
 | `GET /v4/candles/perpetualMarkets/{market}` *(alias `/candles/{market}`)* | OHLCV |
 | `GET /v4/atlas-spot` | Perp-implied spot per market |
 | `GET /v4/oracle` *(aliases `/oracle`, `/prices`)* | Reference prices (delayed publicly) |
-| `GET /v4/oracle/health` *(staging build)* | Oracle self-check: anchor venue, ages, spreads, basket gap |
+| `GET /v4/oracle/health` *(basket-identity self-check)* | Oracle self-check: anchor venue, ages, spreads, basket gap |
 | `GET /v4/leaderboard` | Public leaderboard |
 | `WS /ws` | Realtime stream |
 

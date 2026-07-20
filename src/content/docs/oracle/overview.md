@@ -81,14 +81,27 @@ its contents.
 
 ## Guard layer
 
-Before the composite is published, the exchange runs it through a guard:
+The guard is applied in **two places, by design (defense-in-depth)**: the composite is
+guard-clamped once at **blend time** as it is written, and then **re-validated by the
+exchange consumer on read** before it is published. The deliberate **one-time
+re-anchor** lives only in the exchange copy, so a validated level shift is applied at
+the point of publication rather than baked into the stored composite. The guard the
+exchange runs on read is:
 
-- **per-update clamp** — max 1% move per tick,
-- **daily clamp** — max 10× cumulative move vs start-of-day,
+- **per-update clamp** — max 1% move per tick: the intraday
+  **manipulation control**, bounding how far any single print can drag the rate,
+- **saturation halt** — after repeated same-direction clamps the market
+  `HALT`s, with automatic clearance after a run of clean updates — the second
+  half of the manipulation control, so a sustained push meets a halt rather than
+  a slow grind,
+- **daily clamp** — max 10× cumulative move vs start-of-day: **not** a
+  manipulation control but a deliberately loose **runaway / circuit-breaker
+  backstop**. Its job is only to catch a pathological data-feed blow-up (a
+  mis-scaled or corrupted source running the composite away by orders of
+  magnitude); the tight intraday work is done by the per-tick clamp and
+  saturation halt above, so the 10× magnitude is intentionally wide,
 - **staleness detection** — a wall-clock freshness window per market, surfaced
   as an explicit `STALE` state,
-- **saturation halt** — after repeated same-direction clamps the market
-  `HALT`s, with automatic clearance after a run of clean updates,
 - **one-time re-anchor** — so a *validated* level shift at cutover does not
   grind through the tick clamp into a false halt.
 

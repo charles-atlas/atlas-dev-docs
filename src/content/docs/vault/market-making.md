@@ -79,18 +79,19 @@ than at any single book.
 ## The model, precisely
 
 For readers who want the functional forms (parameters are calibrated per market; the
-tuned values are internal). The mark is an endogenous log-price with three terms — a
-persistent momentum, reversion to the oracle anchor, and micro-noise:
+tuned values are internal). The mark is an endogenous log-price advanced by a discrete
+Euler–Maruyama tick update with three terms — a persistent momentum, reversion to the
+oracle anchor, and a micro-noise innovation over the tick interval Δt:
 
 $$
-d\ln P_t \;=\; \mu_t\,dt \;+\; \frac{1}{\tau_{\text{anc}}(Q_t)}\,\ln\!\frac{A_t}{P_t}\,dt \;+\; \sigma_\epsilon\,\sqrt{dt}\;dW_t
+\Delta \ln P = \mu\,\Delta t \;+\; \frac{1}{\tau_{\text{anc}}(Q)}\ln\!\frac{A}{P}\,\Delta t \;+\; \sigma_\epsilon\,\sqrt{\Delta t}\;Z,\qquad Z\sim\mathcal{N}(0,1)
 $$
 
 where the momentum μ is itself a mean-reverting (AR(1)) velocity that carries trends
-for ~τ_μ seconds:
+for ~τ_μ seconds, updated per tick with its own innovation:
 
 $$
-\mu_t \;=\; \mu_{t-dt}\,e^{-dt/\tau_\mu} \;+\; \sigma_\mu\,\sqrt{dt}\;dZ_t
+\mu_t = \mu_{t-\Delta t}\,e^{-\Delta t/\tau_\mu} \;+\; \sigma_\mu\,\sqrt{\Delta t}\;Z',\qquad Z'\sim\mathcal{N}(0,1)
 $$
 
 and the anchor-reversion time constant **weakens as open interest Q grows** — the
@@ -100,9 +101,11 @@ $$
 \tau_{\text{anc}}(Q) \;=\; \tau_0\left(1 + \min\!\left(\frac{Q}{Q_{\text{ref}}},\ \kappa\right)\right)
 $$
 
-P is hard-clamped to the oracle band A(1±δ); on a band touch the momentum reflects and
-damps. A fill of size q against a per-market cap N moves the mark by a square-root
-impact:
+These are two distinct bands. The endogenous mid P is reflected at a **tighter internal
+mid band** A(1±δ_mid) — on a band touch the momentum reflects and damps — while the
+resting **quotes** derived from P are separately bounded by the **wider public deviation
+guard** A(1±δ_pub), so the mark and the quotes are clamped by different limits. A fill of
+size q against a per-market cap N moves the mark by a square-root impact:
 
 $$
 \Delta \ln P \;=\; \pm\,\beta\,\sqrt{q/N}
@@ -143,9 +146,9 @@ variance cushion rather than a cosmetic one.
 The maker's edge is **architectural**: it is co-located in-process with the matching
 engine. It reads the live book (best bid/ask and depth), posts and cancels resting
 ladders with no network hop, settles through the same path, keeps a live inventory
-view, and applies its own price impact to its mid. That co-location — zero-latency
-quoting on an inventory-aware mid, with first structural position in every book — is
-the structural advantage of running the maker inside the venue.
+view, and applies its own price impact to its mid. That co-location — no-network-hop
+quoting on an inventory-aware mid, where the maker seeds the first resting liquidity in
+every book — is the advantage of running the maker inside the venue.
 
 That advantage is confined to **execution**, and it is walled off from the
 **benchmark**:

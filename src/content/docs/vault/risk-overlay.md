@@ -42,11 +42,16 @@ $$
 
 - **IMR = 0.10**, *deliberately identical* to the independent measurement pipeline's
   constant — the engine and the monitoring dashboards must agree on the same number,
-  or the control argues with its own telemetry.
+  or the control argues with its own telemetry. Because a single IMR is applied to
+  every market, it **cancels in the share ratio** — so for the graduated ladder,
+  CaR-share is identically **notional share**. The IMR value only matters for the
+  absolute $5,000 CaR floor and the optional ADV-scaled cap, not for differentiating
+  high-vol from low-vol markets (the covariance gap this page admits below).
 - CaR here is margin-style capital-at-risk (initial-margin equivalent of the open
   inventory), chosen over a vol-scaled VaR for the control loop because it is
-  simple, monotone in exposure, and immune to vol-estimate noise. (A 95%/1-day VaR
-  is computed alongside for display only.)
+  simple, monotone in exposure, and immune to vol-estimate noise. A **parametric
+  1-day 95% VaR** (per market, `|inv| × σ/√252 × 1.65`) is computed alongside in the
+  monitoring dashboard for display, while CaR remains the control-loop measure.
 - An optional absolute backstop exists — a per-market notional cap scaled by real
   ADV weight and inverse vol (`cap_notional = SEED × CAP_FRAC × ADV_m / vol_factor`)
   — but defaults off (`CAP_FRAC = 0`).
@@ -57,8 +62,9 @@ $$
 
 ## The graduated four-level ladder
 
-The ladder acts in the quoting path and the fill-admission gate. Thresholds are on
-a market's **share of total portfolio CaR**:
+The ladder acts in the quoting path (price, then size, then one-sided quote
+withdrawal). The optional absolute-cap backstop, when armed, additionally tightens
+the fill-admission cap. Thresholds are on a market's **share of total portfolio CaR**:
 
 | Layer | Threshold (default) | Action |
 |---|---|---|
@@ -97,16 +103,23 @@ Design choices worth defending in review:
 An overnight baseline read with the overlay **off** (~30 sim-hours) showed:
 
 - lithium at **41.5%** of total CaR, silver at **26%** — concentration absolutely
-  emerges on its own;
-- but total CaR was only ~$80k on a $5M book (**1.6% utilization**), net markout
-  was **+13 bps**, and max drawdown **0.25%**.
+  emerges on its own (this is the overnight baseline snapshot, a distinct read from
+  the ~$177k / ~33% triggering observation above that first motivated the control —
+  the two figures are different points in time, not one inconsistent state);
+- but total CaR was only ~$80k on a $5M book (**1.6% utilization**) — where $5M is
+  the vault-NAV / risk-seed axis the overlay measures against (`INV_RISK_SEED`), so
+  utilization is on that base — net markout was **+13 bps**, and max drawdown
+  **0.25%**.
 
-Concentration arose **without breaking PnL or markout**. That evidence argues the
-guardrails should be *soft* — bend the book's economics against concentration
-rather than slam position limits shut on a book that is, so far, being paid fairly
-for the inventory it holds. The ladder's thresholds and gains encode exactly that
-posture, and the defaults (0.35 / 0.35 / 0.45 / 0.50) leave the observed 41.5% peak
-inside L1/L2 territory — steered, not banned.
+At ~1.6% utilization the book is barely deployed, so "concentration didn't hurt
+PnL or markout" is best read as a **benign-regime observation**, not a proof that
+concentration is safe. The soft-guardrail posture — bend the book's economics
+against concentration rather than slam position limits shut — is therefore
+**provisional**: a reasonable default for a barely-deployed book, pending a
+higher-utilization / crisis-regime read (already on the [roadmap](/roadmap/)). The
+ladder's thresholds and gains encode that provisional posture, and the defaults
+(0.35 / 0.35 / 0.45 / 0.50) leave the observed 41.5% peak inside L1/L2 territory —
+steered, not banned.
 
 ## What this is — and isn't
 
@@ -134,9 +147,10 @@ $$
 
 with the correlation structure of the battery/AI complex estimated and updated, and
 inventory sized to an expected-shortfall budget rather than a per-market notional cap.
-Today the 95% / 1-day VaR is computed for **display only**; making it the control
-objective (and validating it against a crisis regime) is [roadmap](/roadmap/) work — see
-[Model status & validation](/model-status/).
+Today the 95% / 1-day VaR is the **parametric dashboard readout** described above,
+computed for **display only**; the covariance-based VaR/ES here — and making it the
+control objective (validated against a crisis regime) — remains [roadmap](/roadmap/)
+work. See [Model status & validation](/model-status/).
 
 Promotion of the overlay to the production build is tracked on the
 [Roadmap](/roadmap/).

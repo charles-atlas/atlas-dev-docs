@@ -24,7 +24,7 @@ their P&L against real adverse selection.
 |---|---|---|
 | Matching engine / settlement / margin | Real orders, deterministic engine | Production-grade; exercised in a test environment |
 | Reference-price oracle | Live external market data (a small number of sources) | Real prices; thin source set (see [oracle overview](/oracle/overview/)) |
-| Index construction | Live constituent references | Exact identity; sound |
+| Index construction | Live constituent references | Exact identity algebra; prod enforcement pending (production *reports* a served-vs-implied gap, enforced self-check is v3/staging only — see [oracle overview](/oracle/overview/)) |
 | Market-maker quoting | Real book, **simulated** taker flow | Quotes are real; the counterparty it profits from is a model |
 | Market-making book P&L | Tracks the MM account's real equity — **against simulated flow** | Accounting is honest; the P&L it accrues is not real-flow P&L |
 | Funding settlement | Real per-position settlement | Mechanics real; the funding *design* is incomplete (below) |
@@ -47,7 +47,7 @@ We grade each model on a deliberately unforgiving ladder:
 | Oracle blend | **Principled estimator, fixed guards** | Weighted median-of-medians is robust by construction; but the movement guards are fixed thresholds, not vol-adaptive, and manipulation resistance is asserted, not quantified. |
 | Funding | **Incomplete** | Point-in-time damped premium; **no carry adjustment** — structurally wrong for storable commodities (persistent, harvestable basis). Carry-adjusted + time-weighted funding is on the [roadmap](/roadmap/). |
 | Portfolio risk (CaR overlay) | **Governance control, not a risk model** | Notional-concentration cap; no covariance, no portfolio VaR/ES. Understates joint risk across the correlated battery/AI complex. See [risk overlay](/vault/risk-overlay/). |
-| Index identity | **Validated** | Exact recompute-from-constituents with a self-check. Sound. |
+| Index identity | **Validated (identity algebra); prod enforcement pending** | The formula and fail-closed construction are exact, but per-cycle recompute with an *enforced* self-check is v3/staging only; production currently *reports* a nonzero served-vs-implied gap rather than enforcing it to zero. See [oracle overview](/oracle/overview/). |
 
 ## What validation would require
 

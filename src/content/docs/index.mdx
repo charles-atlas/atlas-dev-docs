@@ -18,7 +18,7 @@ hero:
 import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
 
 Atlas is a **critical-minerals derivatives and reference-price platform**, built around
-four product surfaces that share one codebase family. The stack is deliberately small:
+four product surfaces that share a single Python codebase. The stack is deliberately small:
 a Python FastAPI application per environment, a separate oracle capture process, and
 PostgreSQL. Changes are developed locally, soaked on a staging environment that mirrors
 production, and only then promoted through a controlled, manually-gated path.
@@ -57,5 +57,5 @@ production, and only then promoted through a controlled, manually-gated path.
   <LinkCard title="Oracle overview" description="The tiered blend design and the Atlas Spot thesis." href="oracle/overview/" />
   <LinkCard title="Risk overlay" description="The concentration-at-risk control on the market-making book." href="vault/risk-overlay/" />
   <LinkCard title="Glossary" description="Every term of art in one place." href="reference/glossary/" />
-  <LinkCard title="Roadmap" description="What's planned and in development — everything else here is live today." href="roadmap/" />
+  <LinkCard title="Roadmap" description="What's planned and in development — everything else here is live in production or the test environment, as noted on each page." href="roadmap/" />
 </CardGrid>

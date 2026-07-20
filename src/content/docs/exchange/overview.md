@@ -7,9 +7,9 @@ Python FastAPI app owns every route, every background loop, and the static front
 server, so the whole matching-to-settlement flow stays inside one transaction
 boundary. The latency- and correctness-critical pieces live in pure, independently
 testable modules (the matching engine, risk checks, basket math, the settlement-rail
-client). State lives in PostgreSQL via an asyncpg pool. This is the right shape at
-this stage; the horizontal-scaling evolution — an event log, service decomposition,
-and orchestration — is on the [roadmap](/roadmap/).
+client). State lives in PostgreSQL via an asyncpg pool. The horizontal-scaling
+evolution — an event log, service decomposition, and orchestration — is on the
+[roadmap](/roadmap/).
 
 Each environment (production, staging, dev) runs its own instance of this same
 application against its own database. The staging build carries newer oracle-layer
@@ -17,11 +17,10 @@ additions (the "v3" features) that have not yet been promoted to production.
 
 :::note[One process, many subsystems]
 
-"Monolith" here is an architectural fact, not an accident: a single process owns
-the order books, the risk marks, the WebSocket fan-out, and the settlement path,
-which keeps the matching-to-settlement flow in one transaction boundary. Durable
-state — orders, trades, positions, balances, and halts — lives in the database,
-so a restart **rehydrates** the in-memory books from it rather than losing them.
+A single process owns the order books, the risk marks, the WebSocket fan-out,
+and the settlement path. Durable state — orders, trades, positions, balances,
+and halts — lives in the database, so a restart **rehydrates** the in-memory
+books from it rather than losing them.
 
 :::
 ---
@@ -92,14 +91,6 @@ synthetic or shortcut fill path. What is house-provided today is the book's
 simulated trader flow rather than third-party participants, so the ten markets
 run as a **test environment**. The matching, settlement, margin, and liquidation
 paths that process that flow are the production mechanics.
-
-:::
-
-:::note[Funding design — planned depth]
-
-Carry-adjusted reference pricing (spot adjusted for storage/financing) and
-TWAP funding over the interval are planned; see [Roadmap](/roadmap/). Today's
-funding is a single damped-premium regime applied uniformly.
 
 :::
 

@@ -24,8 +24,11 @@ into the live docs only when it is actually running in production.
 - **Additional input classes** *(Planned / In development)* — price-reporting-agency
   assessments, arm's-length transaction and OTC observations (sourced through the RFQ
   and block workflow and partner execution venues), and sovereign producer-region data.
-  Today the composite is built from listed-venue, redistributor, and dealer-sheet
-  market data; these classes broaden input diversity as they are contracted and activated.
+  These transaction observations are admissible only as arm's-length transaction prints
+  between independent counterparties (Atlas is the venue, not a counterparty); Atlas's own
+  market-making quotes and derived mark remain excluded from rate formation. Today the
+  composite is built from listed-venue, redistributor, and dealer-sheet market data;
+  these classes broaden input diversity as they are contracted and activated.
 - **Direct licensed data feeds** *(Planned)* — replacing today's captured market data
   with licensed venue and assessment feeds. Until those licenses are in place, the docs
   and public methodology describe sources generically.
@@ -57,7 +60,8 @@ into the live docs only when it is actually running in production.
 - **Signed-price support** *(Planned)* — mark, funding, and margin coherent at, near, and
   below zero. The present engine assumes positive prices.
 - **Distributed-ledger settlement rail** *(In development)* — the settlement rail is
-  integrated; activation is pending a coordinated security rotation.
+  built and integrated but fail-closed in production; integration is being completed and
+  activation is pending a coordinated security rotation.
 
 ## Exchange & venues
 
