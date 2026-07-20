@@ -27,16 +27,6 @@ listed-market model: live trading, delayed tape for non-subscribers.
   `"delayed": true` and the delay window alongside the prices, so a consumer
   can never mistake the delayed tape for live data.
 
-:::note[No per-market timestamps in the payload]
-
-The published payload deliberately carries no per-market `asOf`
-timestamps — freshness is inferable only from the delay window. If a
-per-market as-of stamp is ever wanted (it would help licensees audit
-latency), it is an API addition, not a licensing change. See the
-[roadmap](/roadmap/).
-
-:::
-
 ## The licensed real-time view
 
 A licensee passes their key in the standard auth headers. A request is treated

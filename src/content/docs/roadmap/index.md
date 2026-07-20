@@ -47,6 +47,9 @@ into the live docs only when it is actually running in production.
 - **Durable long-horizon audit archival** *(Planned)* — multi-year retention of every
   input observation and published value; today's published-rate history is retained on a
   shorter operational window.
+- **Per-market as-of timestamps in the feed** *(Planned)* — add a per-market `asOf`
+  timestamp to the published payload so licensees can audit latency directly, instead of
+  inferring freshness from the delay window. An API addition, not a licensing change.
 
 ## Funding & settlement
 
